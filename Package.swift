@@ -27,7 +27,10 @@ let package = Package(
         ),
         .testTarget(
             name: "RSSKitTests",
-            dependencies: ["RSSKit"]
+            dependencies: ["RSSKit"],
+            exclude: [
+                "Fixtures"
+            ]
         ),
     ]
 )

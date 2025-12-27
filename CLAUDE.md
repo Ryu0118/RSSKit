@@ -42,10 +42,6 @@ Sources/
 └── RSSKit/
     ├── Models/           # Data structures (RSSFeed, RSSChannel, RSSItem, etc.)
     ├── Parsing/          # XML parsing logic
-    │   ├── RSSParser.swift           # Main entry point
-    │   ├── ChannelParser.swift       # Channel element parsing
-    │   ├── ItemParser.swift          # Item element parsing
-    │   └── ElementParser.swift       # Base parsing utilities
     ├── Extensions/       # Swift extensions
     └── Errors/           # Error types
 
