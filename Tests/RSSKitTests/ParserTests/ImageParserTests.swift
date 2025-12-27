@@ -1,4 +1,5 @@
-@testable import RSSKit
+@testable import RSS2Kit
+@testable import RSSCore
 import Testing
 
 struct ImageParserTests {

@@ -4,20 +4,20 @@ import Foundation
 ///
 /// Provides a simple interface for traversing and extracting
 /// values from XML documents without exposing XMLParser internals.
-struct RSSXMLNode: Sendable, Equatable {
+package struct RSSXMLNode: Sendable, Equatable {
     /// The element name (e.g., "channel", "item").
-    let name: String
+    package let name: String
 
     /// The text content of the element.
-    let text: String?
+    package let text: String?
 
     /// Attributes of the element.
-    let attributes: [String: String]
+    package let attributes: [String: String]
 
     /// Child elements.
-    let children: [RSSXMLNode]
+    package let children: [RSSXMLNode]
 
-    init(
+    package init(
         name: String,
         text: String? = nil,
         attributes: [String: String] = [:],
@@ -30,7 +30,7 @@ struct RSSXMLNode: Sendable, Equatable {
     }
 }
 
-extension RSSXMLNode {
+package extension RSSXMLNode {
     /// Returns the first child element with the given name.
     func child(named name: String) -> RSSXMLNode? {
         children.first { $0.name == name }
@@ -52,7 +52,7 @@ extension RSSXMLNode {
     }
 }
 
-extension RSSXMLNode {
+package extension RSSXMLNode {
     /// Returns the trimmed text content, or nil if empty.
     var trimmedText: String? {
         guard let text = text?.trimmingCharacters(in: .whitespacesAndNewlines),

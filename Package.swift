@@ -1,5 +1,4 @@
 // swift-tools-version: 6.2
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
@@ -13,24 +12,19 @@ let package = Package(
         .visionOS(.v1),
     ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
-        .library(
-            name: "RSSKit",
-            targets: ["RSSKit"]
-        ),
+        .library(name: "RSSKit", targets: ["RSSKit"]),
+        .library(name: "RSS1Kit", targets: ["RSS1Kit"]),
+        .library(name: "RSS2Kit", targets: ["RSS2Kit"]),
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
-        .target(
-            name: "RSSKit"
-        ),
+        .target(name: "RSSCore"),
+        .target(name: "RSS2Kit", dependencies: ["RSSCore"]),
+        .target(name: "RSS1Kit", dependencies: ["RSSCore"]),
+        .target(name: "RSSKit", dependencies: ["RSS1Kit", "RSS2Kit"]),
         .testTarget(
             name: "RSSKitTests",
-            dependencies: ["RSSKit"],
-            exclude: [
-                "Fixtures"
-            ]
+            dependencies: ["RSSKit", "RSSCore", "RSS1Kit", "RSS2Kit"],
+            exclude: ["Fixtures"]
         ),
     ]
 )

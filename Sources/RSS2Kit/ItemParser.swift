@@ -1,4 +1,5 @@
 import Foundation
+import RSSCore
 
 /// Parses RSS item elements into ``RSSItem`` models.
 struct ItemParser: Sendable {

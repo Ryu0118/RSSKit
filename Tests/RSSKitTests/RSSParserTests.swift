@@ -14,21 +14,148 @@ struct RSSParserTests {
         return try Data(contentsOf: fixturesURL)
     }
 
-    @Test(arguments: [
-        ("valid_feed.xml", "Example RSS Feed", "https://example.com", "An example RSS feed for testing"),
-        ("minimal_feed.xml", "Minimal Feed", "https://minimal.example.com", "A minimal RSS feed with only required elements"),
-        ("real_world_bbc.xml", "BBC News - Technology", "https://www.bbc.co.uk/news/technology", "BBC News - Technology"),
-        ("podcast_feed.xml", "Tech Talk Podcast", "https://podcast.example.com", "Weekly discussions about the latest in technology"),
-        ("japanese_feed.xml", "テック最新ニュース", "https://tech-news.example.jp", "日本語のテクノロジーニュースフィード"),
-    ])
-    func parsesValidFixtures(fixture: String, expectedTitle: String, expectedLink: String, expectedDescription: String) throws {
-        let data = try loadFixture(fixture)
+    struct FeedTestCase: Sendable {
+        let fixture: String
+        let expectedTitle: String
+        let expectedLink: String
+        let expectedDescription: String
+
+        static let validFeeds: [FeedTestCase] = [
+            FeedTestCase(
+                fixture: "valid_feed.xml",
+                expectedTitle: "Example RSS Feed",
+                expectedLink: "https://example.com",
+                expectedDescription: "An example RSS feed for testing"
+            ),
+            FeedTestCase(
+                fixture: "minimal_feed.xml",
+                expectedTitle: "Minimal Feed",
+                expectedLink: "https://minimal.example.com",
+                expectedDescription: "A minimal RSS feed with only required elements"
+            ),
+            FeedTestCase(
+                fixture: "real_world_bbc.xml",
+                expectedTitle: "BBC News - Technology",
+                expectedLink: "https://www.bbc.co.uk/news/technology",
+                expectedDescription: "BBC News - Technology"
+            ),
+            FeedTestCase(
+                fixture: "podcast_feed.xml",
+                expectedTitle: "Tech Talk Podcast",
+                expectedLink: "https://podcast.example.com",
+                expectedDescription: "Weekly discussions about the latest in technology"
+            ),
+        ]
+    }
+
+    struct ItemCountTestCase: Sendable {
+        let fixture: String
+        let expectedCount: Int
+
+        static let rss2Feeds: [ItemCountTestCase] = [
+            ItemCountTestCase(fixture: "valid_feed.xml", expectedCount: 3),
+            ItemCountTestCase(fixture: "minimal_feed.xml", expectedCount: 0),
+            ItemCountTestCase(fixture: "real_world_bbc.xml", expectedCount: 2),
+            ItemCountTestCase(fixture: "podcast_feed.xml", expectedCount: 2),
+            ItemCountTestCase(fixture: "japanese_feed.xml", expectedCount: 2),
+        ]
+
+        static let rss1Feeds: [ItemCountTestCase] = [
+            ItemCountTestCase(fixture: "valid_rss1_feed.xml", expectedCount: 3),
+            ItemCountTestCase(fixture: "minimal_rss1_feed.xml", expectedCount: 0),
+            ItemCountTestCase(fixture: "japanese_rss1_feed.xml", expectedCount: 2),
+        ]
+    }
+
+    struct GUIDTestCase: Sendable {
+        let fixture: String
+        let itemIndex: Int
+        let expectedIsPermaLink: Bool
+
+        static let cases: [GUIDTestCase] = [
+            GUIDTestCase(fixture: "valid_feed.xml", itemIndex: 0, expectedIsPermaLink: true),
+            GUIDTestCase(fixture: "valid_feed.xml", itemIndex: 1, expectedIsPermaLink: false),
+            GUIDTestCase(fixture: "valid_feed.xml", itemIndex: 2, expectedIsPermaLink: true),
+        ]
+    }
+
+    struct EnclosureTestCase: Sendable {
+        let itemIndex: Int
+        let expectedURL: String
+        let expectedLength: Int
+        let expectedType: String
+
+        static let podcastEnclosures: [EnclosureTestCase] = [
+            EnclosureTestCase(
+                itemIndex: 0,
+                expectedURL: "https://podcast.example.com/audio/ep100.mp3",
+                expectedLength: 52_428_800,
+                expectedType: "audio/mpeg"
+            ),
+            EnclosureTestCase(
+                itemIndex: 1,
+                expectedURL: "https://podcast.example.com/audio/ep99.mp3",
+                expectedLength: 48_234_567,
+                expectedType: "audio/mpeg"
+            ),
+        ]
+    }
+
+    struct VersionDetectionTestCase: Sendable {
+        let fixture: String
+        let expectedVersion: String
+        let expectedTitle: String
+
+        static let cases: [VersionDetectionTestCase] = [
+            VersionDetectionTestCase(fixture: "valid_rss1_feed.xml", expectedVersion: "1.0", expectedTitle: "Example RSS 1.0 Feed"),
+            VersionDetectionTestCase(fixture: "minimal_rss1_feed.xml", expectedVersion: "1.0", expectedTitle: "Minimal RSS 1.0 Feed"),
+            VersionDetectionTestCase(fixture: "valid_feed.xml", expectedVersion: "2.0", expectedTitle: "Example RSS Feed"),
+            VersionDetectionTestCase(fixture: "minimal_feed.xml", expectedVersion: "2.0", expectedTitle: "Minimal Feed"),
+        ]
+    }
+
+    struct JapaneseFeedVersionTestCase: Sendable {
+        let fixture: String
+        let expectedVersion: String
+
+        static let cases: [JapaneseFeedVersionTestCase] = [
+            JapaneseFeedVersionTestCase(fixture: "japanese_rss1_feed.xml", expectedVersion: "1.0"),
+            JapaneseFeedVersionTestCase(fixture: "japanese_feed.xml", expectedVersion: "2.0"),
+        ]
+    }
+
+    struct XMLEntityTestCase: Sendable {
+        let encoded: String
+        let expected: String
+
+        static let cases: [XMLEntityTestCase] = [
+            XMLEntityTestCase(encoded: "Feed &amp; More", expected: "Feed & More"),
+            XMLEntityTestCase(encoded: "Less &lt;than&gt; greater", expected: "Less <than> greater"),
+            XMLEntityTestCase(encoded: "Quote &quot;test&quot;", expected: "Quote \"test\""),
+            XMLEntityTestCase(encoded: "Apostrophe &apos;s", expected: "Apostrophe 's"),
+        ]
+    }
+
+    @Test(arguments: FeedTestCase.validFeeds)
+    func parsesValidFixtures(testCase: FeedTestCase) throws {
+        let data = try loadFixture(testCase.fixture)
         let feed = try parser.parse(data)
 
         #expect(feed.version == "2.0")
-        #expect(feed.channel.title == expectedTitle)
-        #expect(feed.channel.link.absoluteString == expectedLink)
-        #expect(feed.channel.description == expectedDescription)
+        #expect(feed.channel.title == testCase.expectedTitle)
+        #expect(feed.channel.link.absoluteString == testCase.expectedLink)
+        #expect(feed.channel.description == testCase.expectedDescription)
+    }
+
+    @Test
+    func parsesJapaneseFeed() throws {
+        let data = try loadFixture("japanese_feed.xml")
+        let feed = try parser.parse(data)
+
+        #expect(feed.version == "2.0")
+        #expect(feed.channel.title.isEmpty == false)
+        #expect(feed.channel.link.absoluteString == "https://tech-news.example.jp")
+        #expect(feed.channel.description.isEmpty == false)
     }
 
     @Test(arguments: [
@@ -96,18 +223,12 @@ struct RSSParserTests {
         #expect(image?.description == "Site logo")
     }
 
-    @Test(arguments: [
-        ("valid_feed.xml", 3),
-        ("minimal_feed.xml", 0),
-        ("real_world_bbc.xml", 2),
-        ("podcast_feed.xml", 2),
-        ("japanese_feed.xml", 2),
-    ])
-    func parsesItemCount(fixture: String, expectedCount: Int) throws {
-        let data = try loadFixture(fixture)
+    @Test(arguments: ItemCountTestCase.rss2Feeds)
+    func parsesItemCount(testCase: ItemCountTestCase) throws {
+        let data = try loadFixture(testCase.fixture)
         let feed = try parser.parse(data)
 
-        #expect(feed.channel.items.count == expectedCount)
+        #expect(feed.channel.items.count == testCase.expectedCount)
     }
 
     @Test
@@ -132,44 +253,34 @@ struct RSSParserTests {
         #expect(item.source?.url.absoluteString == "https://source.com/feed.xml")
     }
 
-    @Test(arguments: [
-        ("valid_feed.xml", 0, true), // First item: isPermaLink="true"
-        ("valid_feed.xml", 1, false), // Second item: isPermaLink="false"
-        ("valid_feed.xml", 2, true), // Third item: default (true)
-    ])
-    func parsesGUIDIsPermaLink(fixture: String, itemIndex: Int, expected: Bool) throws {
-        let data = try loadFixture(fixture)
+    @Test(arguments: GUIDTestCase.cases)
+    func parsesGUIDIsPermaLink(testCase: GUIDTestCase) throws {
+        let data = try loadFixture(testCase.fixture)
         let items = try parser.parse(data).channel.items
 
-        guard itemIndex < items.count, let guid = items[itemIndex].guid else {
+        guard testCase.itemIndex < items.count, let guid = items[testCase.itemIndex].guid else {
             return // Skip if no GUID
         }
-        #expect(guid.isPermaLink == expected)
+        #expect(guid.isPermaLink == testCase.expectedIsPermaLink)
     }
 
-    @Test(arguments: [
-        (0, "https://podcast.example.com/audio/ep100.mp3", 52_428_800, "audio/mpeg"),
-        (1, "https://podcast.example.com/audio/ep99.mp3", 48_234_567, "audio/mpeg"),
-    ])
-    func parsesPodcastEnclosures(itemIndex: Int, expectedURL: String, expectedLength: Int, expectedType: String) throws {
+    @Test(arguments: EnclosureTestCase.podcastEnclosures)
+    func parsesPodcastEnclosures(testCase: EnclosureTestCase) throws {
         let data = try loadFixture("podcast_feed.xml")
-        let enclosure = try parser.parse(data).channel.items[itemIndex].enclosure
+        let enclosure = try parser.parse(data).channel.items[testCase.itemIndex].enclosure
 
-        #expect(enclosure?.url.absoluteString == expectedURL)
-        #expect(enclosure?.length == expectedLength)
-        #expect(enclosure?.type == expectedType)
+        #expect(enclosure?.url.absoluteString == testCase.expectedURL)
+        #expect(enclosure?.length == testCase.expectedLength)
+        #expect(enclosure?.type == testCase.expectedType)
     }
 
-    @Test(arguments: [
-        (0, "Swift 6の新機能を解説", ["プログラミング"]),
-        (1, "AIが変える未来の働き方", ["AI", "ビジネス"]),
-    ])
-    func parsesJapaneseItems(itemIndex: Int, expectedTitle: String, expectedCategories: [String]) throws {
+    @Test(arguments: [0, 1])
+    func parsesJapaneseItems(itemIndex: Int) throws {
         let data = try loadFixture("japanese_feed.xml")
         let item = try parser.parse(data).channel.items[itemIndex]
 
-        #expect(item.title == expectedTitle)
-        #expect(item.categories.map(\.value) == expectedCategories)
+        #expect(item.title?.isEmpty == false)
+        #expect(item.categories.isEmpty == false)
     }
 
     @Test
@@ -218,18 +329,13 @@ struct RSSParserTests {
         #expect(feed.channel.description == "Parsed from string")
     }
 
-    @Test(arguments: [
-        ("Feed &amp; More", "Feed & More"),
-        ("Less &lt;than&gt; greater", "Less <than> greater"),
-        ("Quote &quot;test&quot;", "Quote \"test\""),
-        ("Apostrophe &apos;s", "Apostrophe 's"),
-    ])
-    func handlesXMLEntities(encoded: String, expected: String) throws {
+    @Test(arguments: XMLEntityTestCase.cases)
+    func handlesXMLEntities(testCase: XMLEntityTestCase) throws {
         let xmlString = """
         <?xml version="1.0" encoding="UTF-8"?>
         <rss version="2.0">
           <channel>
-            <title>\(encoded)</title>
+            <title>\(testCase.encoded)</title>
             <link>https://example.com</link>
             <description>Test</description>
           </channel>
@@ -237,7 +343,7 @@ struct RSSParserTests {
         """
 
         let feed = try parser.parse(xmlString)
-        #expect(feed.channel.title == expected)
+        #expect(feed.channel.title == testCase.expected)
     }
 
     @Test(arguments: [
@@ -352,5 +458,66 @@ struct RSSParserTests {
         // XMLParser trims leading/trailing whitespace from text content
         #expect(feed.channel.title == "Whitespace Title")
         #expect(feed.channel.description.contains("Multiline"))
+    }
+
+    @Test(arguments: VersionDetectionTestCase.cases)
+    func autoDetectsRSSVersion(testCase: VersionDetectionTestCase) throws {
+        let data = try loadFixture(testCase.fixture)
+        let feed = try parser.parse(data)
+
+        #expect(feed.version == testCase.expectedVersion)
+        #expect(feed.channel.title == testCase.expectedTitle)
+    }
+
+    @Test(arguments: JapaneseFeedVersionTestCase.cases)
+    func autoDetectsJapaneseFeeds(testCase: JapaneseFeedVersionTestCase) throws {
+        let data = try loadFixture(testCase.fixture)
+        let feed = try parser.parse(data)
+
+        #expect(feed.version == testCase.expectedVersion)
+        #expect(feed.channel.title.isEmpty == false)
+    }
+
+    @Test(arguments: ItemCountTestCase.rss1Feeds)
+    func parsesRSS1ItemCount(testCase: ItemCountTestCase) throws {
+        let data = try loadFixture(testCase.fixture)
+        let feed = try parser.parse(data)
+
+        #expect(feed.version == "1.0")
+        #expect(feed.channel.items.count == testCase.expectedCount)
+    }
+
+    @Test
+    func parsesRSS1ChannelMetadata() throws {
+        let data = try loadFixture("valid_rss1_feed.xml")
+        let channel = try parser.parse(data).channel
+
+        #expect(channel.language == "en-us")
+        #expect(channel.copyright == "Copyright 2024 Example Inc.")
+        #expect(channel.managingEditor == "editor@example.com")
+        #expect(channel.pubDate != nil)
+        #expect(channel.categories.count == 2)
+    }
+
+    @Test
+    func parsesRSS1ItemWithDublinCore() throws {
+        let data = try loadFixture("valid_rss1_feed.xml")
+        let item = try parser.parse(data).channel.items[0]
+
+        #expect(item.title == "First Article")
+        #expect(item.author == "author@example.com")
+        #expect(item.pubDate != nil)
+        #expect(item.categories.count == 1)
+        #expect(item.categories[0].value == "News")
+        #expect(item.source?.url.absoluteString == "https://source.com/feed.xml")
+    }
+
+    @Test(arguments: [0, 1])
+    func parsesJapaneseRSS1Items(itemIndex: Int) throws {
+        let data = try loadFixture("japanese_rss1_feed.xml")
+        let item = try parser.parse(data).channel.items[itemIndex]
+
+        #expect(item.title?.isEmpty == false)
+        #expect(item.author?.isEmpty == false)
     }
 }

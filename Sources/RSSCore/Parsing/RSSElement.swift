@@ -1,8 +1,8 @@
-/// XML element names used in RSS 2.0 feeds.
+/// XML element names used in RSS feeds.
 ///
 /// This enum provides type-safe access to RSS element names,
 /// preventing typos and enabling centralized management.
-enum RSSElement: String, Sendable {
+package enum RSSElement: String, Sendable {
     case rss
     case channel
 

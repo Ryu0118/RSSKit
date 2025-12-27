@@ -1,9 +1,46 @@
 import Foundation
-@testable import RSSKit
+@testable import RSS2Kit
+@testable import RSSCore
 import Testing
 
 struct ItemParserTests {
     let parser = ItemParser()
+
+    struct IncompleteEnclosureTestCase: Sendable {
+        let attributes: [String: String]
+        let reason: String
+
+        static let cases: [IncompleteEnclosureTestCase] = [
+            IncompleteEnclosureTestCase(
+                attributes: ["length": "12345", "type": "audio/mpeg"],
+                reason: "missing url"
+            ),
+            IncompleteEnclosureTestCase(
+                attributes: ["url": "https://example.com/audio.mp3", "type": "audio/mpeg"],
+                reason: "missing length"
+            ),
+            IncompleteEnclosureTestCase(
+                attributes: ["url": "https://example.com/audio.mp3", "length": "12345"],
+                reason: "missing type"
+            ),
+            IncompleteEnclosureTestCase(
+                attributes: ["url": "https://example.com/audio.mp3", "length": "invalid", "type": "audio/mpeg"],
+                reason: "invalid length"
+            ),
+        ]
+    }
+
+    struct GUIDPermaLinkTestCase: Sendable {
+        let attributeValue: String
+        let expectedResult: Bool
+
+        static let cases: [GUIDPermaLinkTestCase] = [
+            GUIDPermaLinkTestCase(attributeValue: "true", expectedResult: true),
+            GUIDPermaLinkTestCase(attributeValue: "TRUE", expectedResult: true),
+            GUIDPermaLinkTestCase(attributeValue: "false", expectedResult: false),
+            GUIDPermaLinkTestCase(attributeValue: "FALSE", expectedResult: false),
+        ]
+    }
 
     @Test
     func parsesTitle() {
@@ -164,16 +201,11 @@ struct ItemParserTests {
         #expect(item.enclosure?.type == "audio/mpeg")
     }
 
-    @Test(arguments: [
-        ["length": "12345", "type": "audio/mpeg"], // missing url
-        ["url": "https://example.com/audio.mp3", "type": "audio/mpeg"], // missing length
-        ["url": "https://example.com/audio.mp3", "length": "12345"], // missing type
-        ["url": "https://example.com/audio.mp3", "length": "invalid", "type": "audio/mpeg"], // invalid length
-    ])
-    func returnsNilForIncompleteEnclosure(attributes: [String: String]) {
+    @Test(arguments: IncompleteEnclosureTestCase.cases)
+    func returnsNilForIncompleteEnclosure(testCase: IncompleteEnclosureTestCase) {
         let node = RSSXMLNode(
             name: "item",
-            children: [RSSXMLNode(name: "enclosure", attributes: attributes)]
+            children: [RSSXMLNode(name: "enclosure", attributes: testCase.attributes)]
         )
 
         let item = parser.parse(node)
@@ -192,26 +224,21 @@ struct ItemParserTests {
         #expect(item.guid?.isPermaLink == true) // default
     }
 
-    @Test(arguments: [
-        ("true", true),
-        ("TRUE", true),
-        ("false", false),
-        ("FALSE", false),
-    ])
-    func parsesGUIDIsPermaLink(attrValue: String, expected: Bool) {
+    @Test(arguments: GUIDPermaLinkTestCase.cases)
+    func parsesGUIDIsPermaLink(testCase: GUIDPermaLinkTestCase) {
         let node = RSSXMLNode(
             name: "item",
             children: [
                 RSSXMLNode(
                     name: "guid",
                     text: "id",
-                    attributes: ["isPermaLink": attrValue]
+                    attributes: ["isPermaLink": testCase.attributeValue]
                 ),
             ]
         )
 
         let item = parser.parse(node)
-        #expect(item.guid?.isPermaLink == expected)
+        #expect(item.guid?.isPermaLink == testCase.expectedResult)
     }
 
     @Test

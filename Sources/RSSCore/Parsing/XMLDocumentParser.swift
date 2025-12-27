@@ -4,13 +4,14 @@ import Foundation
 ///
 /// This struct wraps Foundation's `XMLParser` and builds
 /// a simple tree structure for easier traversal.
-struct XMLDocumentParser: Sendable {
+package struct XMLDocumentParser: Sendable {
+    package init() {}
     /// Parses XML data into a root ``RSSXMLNode``.
     ///
     /// - Parameter data: The XML data to parse.
     /// - Returns: The root node of the parsed XML tree.
     /// - Throws: ``RSSError/invalidXML(underlying:)`` if parsing fails.
-    func parse(_ data: Data) throws -> RSSXMLNode {
+    package func parse(_ data: Data) throws -> RSSXMLNode {
         let delegate = ParserDelegate()
         let parser = XMLParser(data: data)
         parser.delegate = delegate

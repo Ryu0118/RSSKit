@@ -4,11 +4,12 @@ A lightweight Swift library for parsing RSS feeds.
 
 ## Project Overview
 
-RSSKit is a focused RSS parsing library that prioritizes simplicity and correctness over feature breadth.
+RSSKit is a modular RSS parsing library that prioritizes simplicity and correctness over feature breadth.
 
-**Scope:**
-- RSS 2.0 parsing only
-- Read-only (no feed generation)
+**Modules:**
+- `RSS2Kit` - RSS 2.0 parsing only
+- `RSS1Kit` - RSS 1.0 (RDF) parsing only
+- `RSSKit` - Unified API with auto-detection (imports both)
 
 **Not Supported:**
 - Atom feeds
@@ -39,28 +40,46 @@ RSSKit is a focused RSS parsing library that prioritizes simplicity and correctn
 
 ```
 Sources/
-└── RSSKit/
-    ├── Models/           # Data structures (RSSFeed, RSSChannel, RSSItem, etc.)
-    ├── Parsing/          # XML parsing logic
-    ├── Extensions/       # Swift extensions
-    └── Errors/           # Error types
+├── RSSCore/              # Shared models and utilities
+│   ├── Models/           # RSSFeed, RSSChannel, RSSItem, etc.
+│   ├── Parsing/          # Shared parsing utilities (XMLDocumentParser, DateParser)
+│   └── Errors/           # RSSError
+├── RSS2Kit/              # RSS 2.0 parser
+│   └── RSS2Parser.swift
+├── RSS1Kit/              # RSS 1.0 parser
+│   └── RSS1Parser.swift
+└── RSSKit/               # Unified API with auto-detection
+    └── RSSParser.swift
 
 Tests/
+├── RSSCoreTests/
+├── RSS2KitTests/
+├── RSS1KitTests/
 └── RSSKitTests/
-    ├── ParserTests/      # Unit tests for parsers
-    ├── ModelTests/       # Unit tests for models
     └── Fixtures/         # Sample RSS feeds for testing
 ```
 
 ### Key Types
 
-| Type | Responsibility |
-|------|----------------|
-| `RSSFeed` | Root model representing a parsed RSS feed |
-| `RSSChannel` | Channel metadata (title, link, description, etc.) |
-| `RSSItem` | Individual feed item |
-| `RSSParser` | Public API for parsing RSS data |
-| `RSSError` | Parsing and validation errors |
+| Type | Module | Responsibility |
+|------|--------|----------------|
+| `RSSFeed` | RSSCore | Root model representing a parsed RSS feed |
+| `RSSChannel` | RSSCore | Channel metadata (title, link, description, etc.) |
+| `RSSItem` | RSSCore | Individual feed item |
+| `RSSError` | RSSCore | Parsing and validation errors |
+| `RSS2Parser` | RSS2Kit | RSS 2.0 parser |
+| `RSS1Parser` | RSS1Kit | RSS 1.0 parser |
+| `RSSParser` | RSSKit | Unified parser with auto-detection |
+
+### Dublin Core Mapping (RSS 1.0)
+
+| Dublin Core | RSSChannel/RSSItem |
+|-------------|-------------------|
+| `dc:creator` | `managingEditor` (channel) / `author` (item) |
+| `dc:date` | `pubDate` |
+| `dc:subject` | `categories` |
+| `dc:rights` | `copyright` |
+| `dc:language` | `language` |
 
 ## Code Style
 
@@ -74,7 +93,7 @@ Tests/
 ### Naming
 
 - Models: Noun-based (`RSSFeed`, `RSSItem`)
-- Parsers: Suffix with `Parser` (`ChannelParser`, `ItemParser`)
+- Parsers: Suffix with `Parser` (`RSS1Parser`, `RSS2Parser`)
 - Errors: Suffix with `Error` (`RSSError`)
 
 ### Documentation
@@ -84,7 +103,7 @@ Tests/
 
 ## Testing
 
-All tests reside in `RSSKitTests`. Follow these guidelines:
+Follow these guidelines:
 
 - Test each parser in isolation
 - Use fixture files for complex RSS documents

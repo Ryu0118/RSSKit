@@ -1,7 +1,27 @@
-@testable import RSSKit
+@testable import RSSCore
 import Testing
 
 struct RSSXMLNodeTests {
+    struct TrimmedTextTestCase: Sendable {
+        let input: String
+        let expected: String
+
+        static let cases: [TrimmedTextTestCase] = [
+            TrimmedTextTestCase(input: "  hello  ", expected: "hello"),
+            TrimmedTextTestCase(input: "\n\ttext\n\t", expected: "text"),
+            TrimmedTextTestCase(input: "no-trim", expected: "no-trim"),
+        ]
+    }
+
+    struct EmptyContentTestCase: Sendable {
+        let input: String
+
+        static let cases: [EmptyContentTestCase] = [
+            EmptyContentTestCase(input: ""),
+            EmptyContentTestCase(input: "   "),
+            EmptyContentTestCase(input: "\n\t\n"),
+        ]
+    }
     @Test
     func childNamedReturnsFirstMatch() {
         let node = RSSXMLNode(
@@ -50,19 +70,15 @@ struct RSSXMLNodeTests {
         #expect(items.map(\.text) == ["1", "2", "3"])
     }
 
-    @Test(arguments: [
-        ("  hello  ", "hello"),
-        ("\n\ttext\n\t", "text"),
-        ("no-trim", "no-trim")
-    ])
-    func trimmedTextTrimsWhitespace(input: String, expected: String) {
-        let node = RSSXMLNode(name: "test", text: input)
-        #expect(node.trimmedText == expected)
+    @Test(arguments: TrimmedTextTestCase.cases)
+    func trimmedTextTrimsWhitespace(testCase: TrimmedTextTestCase) {
+        let node = RSSXMLNode(name: "test", text: testCase.input)
+        #expect(node.trimmedText == testCase.expected)
     }
 
-    @Test(arguments: ["", "   ", "\n\t\n"])
-    func trimmedTextReturnsNilForEmptyContent(input: String) {
-        let node = RSSXMLNode(name: "test", text: input)
+    @Test(arguments: EmptyContentTestCase.cases)
+    func trimmedTextReturnsNilForEmptyContent(testCase: EmptyContentTestCase) {
+        let node = RSSXMLNode(name: "test", text: testCase.input)
         #expect(node.trimmedText == nil)
     }
 

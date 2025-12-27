@@ -1,4 +1,5 @@
 import Foundation
+import RSSCore
 
 /// Parses RSS channel elements into ``RSSChannel`` models.
 struct ChannelParser: Sendable {

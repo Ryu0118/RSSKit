@@ -1,7 +1,7 @@
 import Foundation
 
 /// Parses RFC 822 date strings commonly used in RSS feeds.
-struct DateParser: Sendable {
+package struct DateParser: Sendable {
     /// Common date formats found in RSS feeds.
     private static let formats: [String] = [
         "EEE, dd MMM yyyy HH:mm:ss zzz",
@@ -16,11 +16,13 @@ struct DateParser: Sendable {
         "yyyy-MM-dd",
     ]
 
+    package init() {}
+
     /// Parses a date string using common RSS date formats.
     ///
     /// - Parameter string: The date string to parse.
     /// - Returns: The parsed date, or `nil` if parsing fails.
-    func parse(_ string: String) -> Date? {
+    package func parse(_ string: String) -> Date? {
         let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
 
         for format in Self.formats {

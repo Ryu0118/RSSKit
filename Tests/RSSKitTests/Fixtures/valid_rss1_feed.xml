@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns="http://purl.org/rss/1.0/"
+  xmlns:dc="http://purl.org/dc/elements/1.1/">
+
+  <channel rdf:about="https://example.com/rss">
+    <title>Example RSS 1.0 Feed</title>
+    <link>https://example.com</link>
+    <description>An example RSS 1.0 feed for testing</description>
+    <dc:language>en-us</dc:language>
+    <dc:rights>Copyright 2024 Example Inc.</dc:rights>
+    <dc:creator>editor@example.com</dc:creator>
+    <dc:date>2024-09-07T09:00:00Z</dc:date>
+    <dc:subject>Technology</dc:subject>
+    <dc:subject>Programming</dc:subject>
+    <items>
+      <rdf:Seq>
+        <rdf:li rdf:resource="https://example.com/articles/1"/>
+        <rdf:li rdf:resource="https://example.com/articles/2"/>
+        <rdf:li rdf:resource="https://example.com/articles/3"/>
+      </rdf:Seq>
+    </items>
+  </channel>
+
+  <item rdf:about="https://example.com/articles/1">
+    <title>First Article</title>
+    <link>https://example.com/articles/1</link>
+    <description>This is the first article in RSS 1.0 format.</description>
+    <dc:creator>author@example.com</dc:creator>
+    <dc:date>2024-09-07T08:00:00Z</dc:date>
+    <dc:subject>News</dc:subject>
+    <dc:source>https://source.com/feed.xml</dc:source>
+  </item>
+
+  <item rdf:about="https://example.com/articles/2">
+    <title>Second Article</title>
+    <link>https://example.com/articles/2</link>
+    <description>This is the second article.</description>
+    <dc:date>2024-09-07T09:00:00Z</dc:date>
+  </item>
+
+  <item rdf:about="https://example.com/articles/3">
+    <title>Third Article</title>
+    <link>https://example.com/articles/3</link>
+    <description><![CDATA[<p>HTML content with <strong>formatting</strong>.</p>]]></description>
+    <dc:subject>Tech</dc:subject>
+    <dc:subject>Swift</dc:subject>
+  </item>
+
+</rdf:RDF>

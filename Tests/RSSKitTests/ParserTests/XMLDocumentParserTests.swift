@@ -1,5 +1,5 @@
 import Foundation
-@testable import RSSKit
+@testable import RSSCore
 import Testing
 
 struct XMLDocumentParserTests {

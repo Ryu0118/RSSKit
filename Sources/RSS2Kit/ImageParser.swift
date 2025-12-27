@@ -1,4 +1,5 @@
 import Foundation
+import RSSCore
 
 /// Parses RSS image elements into ``RSSImage`` models.
 struct ImageParser: Sendable {

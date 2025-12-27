@@ -1,7 +1,8 @@
-@testable import RSSKit
+@testable import RSS2Kit
+@testable import RSSCore
 import Testing
 
-private typealias XMLNode = RSSKit.RSSXMLNode
+private typealias XMLNode = RSSXMLNode
 
 struct ChannelParserTests {
     let parser = ChannelParser()
