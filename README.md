@@ -1,10 +1,12 @@
 # RSSKit
 
-A lightweight Swift library for parsing RSS 2.0 feeds.
+A lightweight Swift library for parsing RSS feeds with support for RSS 1.0 and RSS 2.0.
 
 ## Features
 
-- RSS 2.0 compliant parsing
+- RSS 1.0 (RDF/XML) and RSS 2.0 parsing
+- Automatic format detection
+- Modular architecture - use only what you need
 - Fully type-safe with Swift's strong typing
 - `Sendable` conformance for safe concurrency
 - Zero external dependencies (uses only Foundation)
@@ -27,22 +29,76 @@ dependencies: [
 ]
 ```
 
+Then add the appropriate target dependency based on your needs:
+
+```swift
+// For auto-detection (RSS 1.0 & 2.0)
+.target(name: "YourTarget", dependencies: ["RSSKit"])
+
+// For RSS 2.0 only
+.target(name: "YourTarget", dependencies: ["RSS2Kit"])
+
+// For RSS 1.0 only
+.target(name: "YourTarget", dependencies: ["RSS1Kit"])
+```
+
 Or add it through Xcode: File → Add Package Dependencies.
+
+## Module Structure
+
+```
+RSSKit
+├── RSSCore      # Shared models and utilities
+├── RSS1Kit      # RSS 1.0 (RDF/XML) parser
+├── RSS2Kit      # RSS 2.0 parser
+└── RSSKit       # Unified API with auto-detection
+```
+
+| Module | Description | Use Case |
+|--------|-------------|----------|
+| `RSSKit` | Unified parser with auto-detection | When you need to parse feeds of unknown format |
+| `RSS1Kit` | RSS 1.0 parser only | When you only work with RSS 1.0 feeds |
+| `RSS2Kit` | RSS 2.0 parser only | When you only work with RSS 2.0 feeds |
+| `RSSCore` | Shared types (automatically included) | Not imported directly |
 
 ## Usage
 
-### Basic Parsing
+### Auto-Detection (Recommended)
+
+Use `RSSKit` when you don't know the feed format in advance:
 
 ```swift
 import RSSKit
 
 let parser = RSSParser()
 
-// Parse from Data
+// Automatically detects RSS 1.0 or 2.0
 let feed = try parser.parse(data)
 
-// Or parse from String
-let feed = try parser.parse(xmlString)
+// Check the version
+print(feed.version)  // "1.0" or "2.0"
+```
+
+### RSS 2.0 Only
+
+Use `RSS2Kit` for smaller binary size when you only need RSS 2.0:
+
+```swift
+import RSS2Kit
+
+let parser = RSS2Parser()
+let feed = try parser.parse(data)
+```
+
+### RSS 1.0 Only
+
+Use `RSS1Kit` when working exclusively with RSS 1.0 (RDF) feeds:
+
+```swift
+import RSS1Kit
+
+let parser = RSS1Parser()
+let feed = try parser.parse(data)
 ```
 
 ### Accessing Feed Content
@@ -138,7 +194,7 @@ do {
 
 ## Limitations
 
-- **RSS 2.0 only**: Atom and JSON Feed formats are not supported
+- **RSS only**: Atom and JSON Feed formats are not supported
 - **Read-only**: Feed generation is not supported
 - **Standard elements only**: Namespace extensions (e.g., iTunes podcast tags) are ignored
 
