@@ -5,8 +5,6 @@ import Foundation
 /// A channel contains required elements (title, link, description)
 /// and optional elements like language, copyright, and items.
 public struct RSSChannel: Sendable, Equatable {
-    // MARK: - Required Elements
-
     /// The name of the channel.
     public let title: String
 
@@ -15,8 +13,6 @@ public struct RSSChannel: Sendable, Equatable {
 
     /// A description of the channel.
     public let description: String
-
-    // MARK: - Optional Elements
 
     /// The language the channel is written in (e.g., "en-us").
     public let language: String?

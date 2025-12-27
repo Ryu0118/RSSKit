@@ -1,11 +1,9 @@
-@testable import RSSKit
 import Foundation
+@testable import RSSKit
 import Testing
 
 struct ItemParserTests {
     let parser = ItemParser()
-
-    // MARK: - Basic Fields
 
     @Test
     func parsesTitle() {
@@ -73,8 +71,6 @@ struct ItemParserTests {
         #expect(item.pubDate != nil)
     }
 
-    // MARK: - Empty Item
-
     @Test
     func parsesEmptyItem() {
         let node = RSSXMLNode(name: "item", children: [])
@@ -86,8 +82,6 @@ struct ItemParserTests {
         #expect(item.description == nil)
         #expect(item.categories.isEmpty)
     }
-
-    // MARK: - Categories
 
     @Test
     func parsesSingleCategory() {
@@ -148,8 +142,6 @@ struct ItemParserTests {
         #expect(item.categories.first?.value == "Valid")
     }
 
-    // MARK: - Enclosure
-
     @Test
     func parsesEnclosure() {
         let node = RSSXMLNode(
@@ -173,10 +165,10 @@ struct ItemParserTests {
     }
 
     @Test(arguments: [
-        ["length": "12345", "type": "audio/mpeg"],  // missing url
-        ["url": "https://example.com/audio.mp3", "type": "audio/mpeg"],  // missing length
-        ["url": "https://example.com/audio.mp3", "length": "12345"],  // missing type
-        ["url": "https://example.com/audio.mp3", "length": "invalid", "type": "audio/mpeg"],  // invalid length
+        ["length": "12345", "type": "audio/mpeg"], // missing url
+        ["url": "https://example.com/audio.mp3", "type": "audio/mpeg"], // missing length
+        ["url": "https://example.com/audio.mp3", "length": "12345"], // missing type
+        ["url": "https://example.com/audio.mp3", "length": "invalid", "type": "audio/mpeg"], // invalid length
     ])
     func returnsNilForIncompleteEnclosure(attributes: [String: String]) {
         let node = RSSXMLNode(
@@ -188,8 +180,6 @@ struct ItemParserTests {
         #expect(item.enclosure == nil)
     }
 
-    // MARK: - GUID
-
     @Test
     func parsesGUID() {
         let node = RSSXMLNode(
@@ -199,7 +189,7 @@ struct ItemParserTests {
 
         let item = parser.parse(node)
         #expect(item.guid?.value == "unique-id-123")
-        #expect(item.guid?.isPermaLink == true)  // default
+        #expect(item.guid?.isPermaLink == true) // default
     }
 
     @Test(arguments: [
@@ -234,8 +224,6 @@ struct ItemParserTests {
         let item = parser.parse(node)
         #expect(item.guid == nil)
     }
-
-    // MARK: - Source
 
     @Test
     func parsesSource() {
@@ -283,8 +271,6 @@ struct ItemParserTests {
         #expect(item.source == nil)
     }
 
-    // MARK: - Invalid URLs
-
     @Test
     func returnsNilForEmptyLinkURL() {
         let node = RSSXMLNode(
@@ -295,8 +281,6 @@ struct ItemParserTests {
         let item = parser.parse(node)
         #expect(item.link == nil)
     }
-
-    // MARK: - Multiple Items
 
     @Test
     func parsesMultipleItems() {

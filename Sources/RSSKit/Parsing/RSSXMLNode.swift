@@ -30,8 +30,6 @@ struct RSSXMLNode: Sendable, Equatable {
     }
 }
 
-// MARK: - Child Access
-
 extension RSSXMLNode {
     /// Returns the first child element with the given name.
     func child(named name: String) -> RSSXMLNode? {
@@ -53,8 +51,6 @@ extension RSSXMLNode {
         children(named: element.rawValue)
     }
 }
-
-// MARK: - Value Extraction
 
 extension RSSXMLNode {
     /// Returns the trimmed text content, or nil if empty.

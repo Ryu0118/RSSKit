@@ -1,11 +1,9 @@
-@testable import RSSKit
 import Foundation
+@testable import RSSKit
 import Testing
 
 struct RSSParserTests {
     let parser = RSSParser()
-
-    // MARK: - Test Helpers
 
     private func loadFixture(_ name: String) throws -> Data {
         let fixturesURL = URL(fileURLWithPath: #filePath)
@@ -15,8 +13,6 @@ struct RSSParserTests {
 
         return try Data(contentsOf: fixturesURL)
     }
-
-    // MARK: - Valid Fixtures (Parameterized)
 
     @Test(arguments: [
         ("valid_feed.xml", "Example RSS Feed", "https://example.com", "An example RSS feed for testing"),
@@ -35,8 +31,6 @@ struct RSSParserTests {
         #expect(feed.channel.description == expectedDescription)
     }
 
-    // MARK: - Invalid Fixtures (Parameterized)
-
     @Test(arguments: [
         "invalid_no_channel.xml",
         "invalid_not_rss.xml",
@@ -49,8 +43,6 @@ struct RSSParserTests {
         }
     }
 
-    // MARK: - Invalid XML Strings (Parameterized)
-
     @Test(arguments: [
         "This is not XML at all",
         "<broken><unclosed>",
@@ -62,8 +54,6 @@ struct RSSParserTests {
             try parser.parse(input)
         }
     }
-
-    // MARK: - Channel Metadata (valid_feed.xml)
 
     @Test
     func parsesChannelMetadata() throws {
@@ -106,8 +96,6 @@ struct RSSParserTests {
         #expect(image?.description == "Site logo")
     }
 
-    // MARK: - Items (Parameterized)
-
     @Test(arguments: [
         ("valid_feed.xml", 3),
         ("minimal_feed.xml", 0),
@@ -144,24 +132,20 @@ struct RSSParserTests {
         #expect(item.source?.url.absoluteString == "https://source.com/feed.xml")
     }
 
-    // MARK: - GUID isPermaLink (Parameterized)
-
     @Test(arguments: [
-        ("valid_feed.xml", 0, true),   // First item: isPermaLink="true"
-        ("valid_feed.xml", 1, false),  // Second item: isPermaLink="false"
-        ("valid_feed.xml", 2, true),   // Third item: default (true)
+        ("valid_feed.xml", 0, true), // First item: isPermaLink="true"
+        ("valid_feed.xml", 1, false), // Second item: isPermaLink="false"
+        ("valid_feed.xml", 2, true), // Third item: default (true)
     ])
     func parsesGUIDIsPermaLink(fixture: String, itemIndex: Int, expected: Bool) throws {
         let data = try loadFixture(fixture)
         let items = try parser.parse(data).channel.items
 
         guard itemIndex < items.count, let guid = items[itemIndex].guid else {
-            return  // Skip if no GUID
+            return // Skip if no GUID
         }
         #expect(guid.isPermaLink == expected)
     }
-
-    // MARK: - Enclosure (Parameterized - Podcast)
 
     @Test(arguments: [
         (0, "https://podcast.example.com/audio/ep100.mp3", 52_428_800, "audio/mpeg"),
@@ -176,8 +160,6 @@ struct RSSParserTests {
         #expect(enclosure?.type == expectedType)
     }
 
-    // MARK: - Japanese Content (Parameterized)
-
     @Test(arguments: [
         (0, "Swift 6の新機能を解説", ["プログラミング"]),
         (1, "AIが変える未来の働き方", ["AI", "ビジネス"]),
@@ -190,8 +172,6 @@ struct RSSParserTests {
         #expect(item.categories.map(\.value) == expectedCategories)
     }
 
-    // MARK: - CDATA Content
-
     @Test
     func parsesCDATAContent() throws {
         let data = try loadFixture("valid_feed.xml")
@@ -199,8 +179,6 @@ struct RSSParserTests {
 
         #expect(item.description == "<p>HTML content with <strong>formatting</strong>.</p>")
     }
-
-    // MARK: - Minimal Feed Defaults
 
     @Test
     func minimalFeedHasNilOptionalFields() throws {
@@ -221,28 +199,24 @@ struct RSSParserTests {
         #expect(channel.ttl == nil)
     }
 
-    // MARK: - String Parsing
-
     @Test
     func parsesFromString() throws {
         let xmlString = """
-            <?xml version="1.0" encoding="UTF-8"?>
-            <rss version="2.0">
-              <channel>
-                <title>String Feed</title>
-                <link>https://string.example.com</link>
-                <description>Parsed from string</description>
-              </channel>
-            </rss>
-            """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+          <channel>
+            <title>String Feed</title>
+            <link>https://string.example.com</link>
+            <description>Parsed from string</description>
+          </channel>
+        </rss>
+        """
 
         let feed = try parser.parse(xmlString)
 
         #expect(feed.channel.title == "String Feed")
         #expect(feed.channel.description == "Parsed from string")
     }
-
-    // MARK: - Special Characters (Parameterized)
 
     @Test(arguments: [
         ("Feed &amp; More", "Feed & More"),
@@ -252,21 +226,19 @@ struct RSSParserTests {
     ])
     func handlesXMLEntities(encoded: String, expected: String) throws {
         let xmlString = """
-            <?xml version="1.0" encoding="UTF-8"?>
-            <rss version="2.0">
-              <channel>
-                <title>\(encoded)</title>
-                <link>https://example.com</link>
-                <description>Test</description>
-              </channel>
-            </rss>
-            """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+          <channel>
+            <title>\(encoded)</title>
+            <link>https://example.com</link>
+            <description>Test</description>
+          </channel>
+        </rss>
+        """
 
         let feed = try parser.parse(xmlString)
         #expect(feed.channel.title == expected)
     }
-
-    // MARK: - Empty Elements (Parameterized)
 
     @Test(arguments: [
         "language",
@@ -277,16 +249,16 @@ struct RSSParserTests {
     ])
     func emptyOptionalElementsReturnNil(element: String) throws {
         let xmlString = """
-            <?xml version="1.0" encoding="UTF-8"?>
-            <rss version="2.0">
-              <channel>
-                <title>Feed</title>
-                <link>https://example.com</link>
-                <description>Desc</description>
-                <\(element)></\(element)>
-              </channel>
-            </rss>
-            """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+          <channel>
+            <title>Feed</title>
+            <link>https://example.com</link>
+            <description>Desc</description>
+            <\(element)></\(element)>
+          </channel>
+        </rss>
+        """
 
         let channel = try parser.parse(xmlString).channel
 
@@ -300,8 +272,6 @@ struct RSSParserTests {
         }
     }
 
-    // MARK: - Version Attribute (Parameterized)
-
     @Test(arguments: [
         "2.0",
         "2.0.1",
@@ -309,36 +279,34 @@ struct RSSParserTests {
     ])
     func parsesVersionAttribute(version: String) throws {
         let xmlString = """
-            <?xml version="1.0" encoding="UTF-8"?>
-            <rss version="\(version)">
-              <channel>
-                <title>Feed</title>
-                <link>https://example.com</link>
-                <description>Desc</description>
-              </channel>
-            </rss>
-            """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <rss version="\(version)">
+          <channel>
+            <title>Feed</title>
+            <link>https://example.com</link>
+            <description>Desc</description>
+          </channel>
+        </rss>
+        """
 
         let feed = try parser.parse(xmlString)
         #expect(feed.version == version)
     }
 
-    // MARK: - Ignored Elements
-
     @Test
     func ignoresUnknownElements() throws {
         let xmlString = """
-            <?xml version="1.0" encoding="UTF-8"?>
-            <rss version="2.0">
-              <channel>
-                <title>Feed</title>
-                <link>https://example.com</link>
-                <description>Desc</description>
-                <customElement>Custom value</customElement>
-                <anotherUnknown attr="value">Text</anotherUnknown>
-              </channel>
-            </rss>
-            """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+          <channel>
+            <title>Feed</title>
+            <link>https://example.com</link>
+            <description>Desc</description>
+            <customElement>Custom value</customElement>
+            <anotherUnknown attr="value">Text</anotherUnknown>
+          </channel>
+        </rss>
+        """
 
         let feed = try parser.parse(xmlString)
         #expect(feed.channel.title == "Feed")
@@ -347,39 +315,37 @@ struct RSSParserTests {
     @Test
     func ignoresNamespacedElements() throws {
         let xmlString = """
-            <?xml version="1.0" encoding="UTF-8"?>
-            <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
-              <channel>
-                <title>Podcast</title>
-                <link>https://example.com</link>
-                <description>A podcast</description>
-                <itunes:author>John Doe</itunes:author>
-                <itunes:summary>Podcast summary</itunes:summary>
-              </channel>
-            </rss>
-            """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+          <channel>
+            <title>Podcast</title>
+            <link>https://example.com</link>
+            <description>A podcast</description>
+            <itunes:author>John Doe</itunes:author>
+            <itunes:summary>Podcast summary</itunes:summary>
+          </channel>
+        </rss>
+        """
 
         let feed = try parser.parse(xmlString)
         #expect(feed.channel.title == "Podcast")
     }
 
-    // MARK: - Whitespace Handling
-
     @Test
     func trimsWhitespaceFromElements() throws {
         let xmlString = """
-            <?xml version="1.0" encoding="UTF-8"?>
-            <rss version="2.0">
-              <channel>
-                <title>  Whitespace Title  </title>
-                <link>https://example.com</link>
-                <description>
-                    Multiline
-                    description
-                </description>
-              </channel>
-            </rss>
-            """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+          <channel>
+            <title>  Whitespace Title  </title>
+            <link>https://example.com</link>
+            <description>
+                Multiline
+                description
+            </description>
+          </channel>
+        </rss>
+        """
 
         let feed = try parser.parse(xmlString)
 

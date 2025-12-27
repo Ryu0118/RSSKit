@@ -1,11 +1,9 @@
-import Testing
 import Foundation
 @testable import RSSKit
+import Testing
 
 struct XMLDocumentParserTests {
     let parser = XMLDocumentParser()
-
-    // MARK: - Valid XML
 
     @Test
     func parsesSimpleElement() throws {
@@ -92,8 +90,6 @@ struct XMLDocumentParserTests {
         #expect(deepNode?.trimmedText == "deep")
     }
 
-    // MARK: - Invalid XML
-
     @Test
     func throwsOnInvalidXML() {
         let xml = "<unclosed>"
@@ -122,8 +118,6 @@ struct XMLDocumentParserTests {
             try parser.parse(data)
         }
     }
-
-    // MARK: - Encoding
 
     @Test
     func parsesUTF8Content() throws {

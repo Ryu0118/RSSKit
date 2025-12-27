@@ -56,8 +56,6 @@ struct ChannelParser: Sendable {
     }
 }
 
-// MARK: - Private Helpers
-
 private extension ChannelParser {
     func parseURL(_ string: String?) -> URL? {
         guard let string = string else { return nil }

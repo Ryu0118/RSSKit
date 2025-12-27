@@ -2,8 +2,6 @@
 import Testing
 
 struct RSSXMLNodeTests {
-    // MARK: - Child Access
-
     @Test
     func childNamedReturnsFirstMatch() {
         let node = RSSXMLNode(
@@ -52,8 +50,6 @@ struct RSSXMLNodeTests {
         #expect(items.map(\.text) == ["1", "2", "3"])
     }
 
-    // MARK: - Text Extraction
-
     @Test(arguments: [
         ("  hello  ", "hello"),
         ("\n\ttext\n\t", "text"),
@@ -92,8 +88,6 @@ struct RSSXMLNodeTests {
         #expect(node.text(for: .title) == nil)
     }
 
-    // MARK: - Attribute Access
-
     @Test
     func attributeReturnsValue() {
         let node = RSSXMLNode(
@@ -120,8 +114,6 @@ struct RSSXMLNodeTests {
 
         #expect(node.attribute(.isPermaLink) == "false")
     }
-
-    // MARK: - Initialization
 
     @Test
     func defaultValues() {

@@ -1,11 +1,9 @@
-@testable import RSSKit
 import Foundation
+@testable import RSSKit
 import Testing
 
 struct DateParserTests {
     let parser = DateParser()
-
-    // MARK: - RFC 822 Formats
 
     @Test(arguments: [
         "Sat, 07 Sep 2002 09:42:31 GMT",
@@ -32,8 +30,6 @@ struct DateParserTests {
         #expect(parser.parse(input) != nil)
     }
 
-    // MARK: - ISO 8601 Formats
-
     @Test(arguments: [
         "2002-09-07T09:42:31Z",
         "2002-09-07T09:42:31+0000",
@@ -48,15 +44,11 @@ struct DateParserTests {
         #expect(parser.parse("2002-09-07") != nil)
     }
 
-    // MARK: - Whitespace Handling
-
     @Test
     func trimsWhitespace() {
         let input = "  Sat, 07 Sep 2002 09:42:31 GMT  \n"
         #expect(parser.parse(input) != nil)
     }
-
-    // MARK: - Invalid Input
 
     @Test(arguments: [
         "",
@@ -67,8 +59,6 @@ struct DateParserTests {
     func returnsNilForInvalidFormat(input: String) {
         #expect(parser.parse(input) == nil)
     }
-
-    // MARK: - Date Value Verification
 
     @Test
     func parsesCorrectDateComponents() throws {

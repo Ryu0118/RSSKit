@@ -59,8 +59,6 @@ public struct RSSParser: Sendable {
     }
 }
 
-// MARK: - Private Helpers
-
 private extension RSSParser {
     func parseRSS(_ root: RSSXMLNode) throws -> RSSFeed {
         guard root.name == RSSElement.rss.rawValue else {

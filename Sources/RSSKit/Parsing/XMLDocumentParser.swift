@@ -28,8 +28,6 @@ struct XMLDocumentParser: Sendable {
     }
 }
 
-// MARK: - Parser Delegate
-
 private final class ParserDelegate: NSObject, XMLParserDelegate {
     private var nodeStack: [NodeBuilder] = []
     private(set) var rootNode: RSSXMLNode?

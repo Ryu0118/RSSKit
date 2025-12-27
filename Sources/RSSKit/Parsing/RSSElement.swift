@@ -3,12 +3,8 @@
 /// This enum provides type-safe access to RSS element names,
 /// preventing typos and enabling centralized management.
 enum RSSElement: String, Sendable {
-    // MARK: - Root Elements
-
     case rss
     case channel
-
-    // MARK: - Channel Elements
 
     case title
     case link
@@ -30,8 +26,6 @@ enum RSSElement: String, Sendable {
     case skipHours
     case skipDays
 
-    // MARK: - Item Elements
-
     case item
     case author
     case comments
@@ -39,22 +33,14 @@ enum RSSElement: String, Sendable {
     case guid
     case source
 
-    // MARK: - Image Elements
-
     case url
     case width
     case height
 
-    // MARK: - Enclosure Attributes
-
     case length
     case type
 
-    // MARK: - GUID Attributes
-
     case isPermaLink
-
-    // MARK: - Cloud Attributes
 
     case domain
     case port

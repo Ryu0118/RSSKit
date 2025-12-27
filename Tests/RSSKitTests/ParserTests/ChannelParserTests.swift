@@ -6,8 +6,6 @@ private typealias XMLNode = RSSKit.RSSXMLNode
 struct ChannelParserTests {
     let parser = ChannelParser()
 
-    // MARK: - Helpers
-
     private func minimalChannelNode(
         title: String = "Title",
         link: String = "https://example.com",
@@ -23,8 +21,6 @@ struct ChannelParserTests {
             ] + additionalChildren
         )
     }
-
-    // MARK: - Required Fields
 
     @Test
     func parsesRequiredFields() throws {
@@ -91,8 +87,6 @@ struct ChannelParserTests {
         }
     }
 
-    // MARK: - Optional String Fields
-
     @Test
     func parsesLanguage() throws {
         let node = minimalChannelNode(
@@ -143,8 +137,6 @@ struct ChannelParserTests {
         #expect(channel.generator == "RSSKit")
     }
 
-    // MARK: - Dates
-
     @Test
     func parsesPubDate() throws {
         let node = minimalChannelNode(
@@ -175,8 +167,6 @@ struct ChannelParserTests {
         #expect(channel.pubDate == nil)
     }
 
-    // MARK: - URLs
-
     @Test
     func parsesDocs() throws {
         let node = minimalChannelNode(
@@ -196,8 +186,6 @@ struct ChannelParserTests {
         let channel = try parser.parse(node)
         #expect(channel.docs == nil)
     }
-
-    // MARK: - TTL
 
     @Test
     func parsesTTL() throws {
@@ -219,8 +207,6 @@ struct ChannelParserTests {
         #expect(channel.ttl == nil)
     }
 
-    // MARK: - Categories
-
     @Test
     func parsesCategories() throws {
         let node = minimalChannelNode(
@@ -238,8 +224,6 @@ struct ChannelParserTests {
         #expect(channel.categories[1].value == "Programming")
         #expect(channel.categories[1].domain == "http://example.com")
     }
-
-    // MARK: - Image
 
     @Test
     func parsesImage() throws {
@@ -278,8 +262,6 @@ struct ChannelParserTests {
         #expect(channel.image == nil)
     }
 
-    // MARK: - Items
-
     @Test
     func parsesItems() throws {
         let node = minimalChannelNode(
@@ -303,8 +285,6 @@ struct ChannelParserTests {
         let channel = try parser.parse(node)
         #expect(channel.items.isEmpty)
     }
-
-    // MARK: - Default Values
 
     @Test
     func optionalFieldsDefaultToNil() throws {

@@ -36,8 +36,6 @@ struct ItemParser: Sendable {
     }
 }
 
-// MARK: - Private Helpers
-
 private extension ItemParser {
     func parseURL(_ string: String?) -> URL? {
         guard let string = string else { return nil }

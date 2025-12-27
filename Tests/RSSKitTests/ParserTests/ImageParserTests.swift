@@ -4,8 +4,6 @@ import Testing
 struct ImageParserTests {
     let parser = ImageParser()
 
-    // MARK: - Valid Image
-
     @Test
     func parsesRequiredFields() throws {
         let node = RSSXMLNode(
@@ -63,8 +61,6 @@ struct ImageParserTests {
         #expect(image.description == nil)
     }
 
-    // MARK: - Missing Required Fields
-
     @Test
     func returnsNilWhenURLMissing() {
         let node = RSSXMLNode(
@@ -104,8 +100,6 @@ struct ImageParserTests {
         #expect(parser.parse(node) == nil)
     }
 
-    // MARK: - Invalid URLs
-
     @Test
     func returnsNilForEmptyImageURL() {
         let node = RSSXMLNode(
@@ -133,8 +127,6 @@ struct ImageParserTests {
 
         #expect(parser.parse(node) == nil)
     }
-
-    // MARK: - Invalid Dimensions
 
     @Test
     func ignoresInvalidWidth() throws {
