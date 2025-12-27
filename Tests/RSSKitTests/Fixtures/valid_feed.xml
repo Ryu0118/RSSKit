@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Example RSS Feed</title>
+    <link>https://example.com</link>
+    <description>An example RSS feed for testing</description>
+    <language>en-us</language>
+    <copyright>Copyright 2024 Example Inc.</copyright>
+    <managingEditor>editor@example.com</managingEditor>
+    <webMaster>webmaster@example.com</webMaster>
+    <pubDate>Sat, 07 Sep 2024 09:00:00 GMT</pubDate>
+    <lastBuildDate>Sat, 07 Sep 2024 10:00:00 GMT</lastBuildDate>
+    <generator>RSSKit Test Generator</generator>
+    <docs>https://www.rssboard.org/rss-specification</docs>
+    <ttl>60</ttl>
+    <category>Technology</category>
+    <category domain="https://example.com/categories">Programming</category>
+    <image>
+      <url>https://example.com/logo.png</url>
+      <title>Example Logo</title>
+      <link>https://example.com</link>
+      <width>88</width>
+      <height>31</height>
+      <description>Site logo</description>
+    </image>
+    <item>
+      <title>First Article</title>
+      <link>https://example.com/articles/1</link>
+      <description>This is the first article.</description>
+      <author>author@example.com</author>
+      <category>News</category>
+      <comments>https://example.com/articles/1#comments</comments>
+      <enclosure url="https://example.com/audio/episode1.mp3" length="12345678" type="audio/mpeg"/>
+      <guid isPermaLink="true">https://example.com/articles/1</guid>
+      <pubDate>Sat, 07 Sep 2024 08:00:00 GMT</pubDate>
+      <source url="https://source.com/feed.xml">Source Feed</source>
+    </item>
+    <item>
+      <title>Second Article</title>
+      <link>https://example.com/articles/2</link>
+      <description>This is the second article.</description>
+      <guid isPermaLink="false">article-2-unique-id</guid>
+      <pubDate>Sat, 07 Sep 2024 09:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Third Article</title>
+      <link>https://example.com/articles/3</link>
+      <description><![CDATA[<p>HTML content with <strong>formatting</strong>.</p>]]></description>
+      <category>Tech</category>
+      <category>Swift</category>
+    </item>
+  </channel>
+</rss>

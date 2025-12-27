@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>テック最新ニュース</title>
+    <link>https://tech-news.example.jp</link>
+    <description>日本語のテクノロジーニュースフィード</description>
+    <language>ja</language>
+    <pubDate>Fri, 27 Dec 2024 12:00:00 +0900</pubDate>
+    <item>
+      <title>Swift 6の新機能を解説</title>
+      <link>https://tech-news.example.jp/articles/swift6</link>
+      <description>アップルが発表したSwift 6には、多くの新しい機能が含まれています。</description>
+      <category>プログラミング</category>
+      <pubDate>Fri, 27 Dec 2024 10:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>AIが変える未来の働き方</title>
+      <link>https://tech-news.example.jp/articles/ai-future</link>
+      <description>人工知能技術がビジネスにもたらす影響について考察します。</description>
+      <category>AI</category>
+      <category>ビジネス</category>
+      <pubDate>Thu, 26 Dec 2024 15:30:00 +0900</pubDate>
+    </item>
+  </channel>
+</rss>

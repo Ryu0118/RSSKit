@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>BBC News - Technology</title>
+    <link>https://www.bbc.co.uk/news/technology</link>
+    <description>BBC News - Technology</description>
+    <language>en-gb</language>
+    <lastBuildDate>Fri, 27 Dec 2024 10:00:00 GMT</lastBuildDate>
+    <copyright>Copyright: (C) British Broadcasting Corporation</copyright>
+    <image>
+      <url>https://news.bbcimg.co.uk/nol/shared/img/bbc_news_120x60.gif</url>
+      <title>BBC News - Technology</title>
+      <link>https://www.bbc.co.uk/news/technology</link>
+    </image>
+    <item>
+      <title>Tech giants face new regulations</title>
+      <description>Major technology companies will face stricter oversight under new legislation.</description>
+      <link>https://www.bbc.co.uk/news/technology-12345678</link>
+      <guid isPermaLink="false">https://www.bbc.co.uk/news/technology-12345678</guid>
+      <pubDate>Fri, 27 Dec 2024 08:30:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>AI breakthrough announced</title>
+      <description>Researchers reveal significant advancement in artificial intelligence.</description>
+      <link>https://www.bbc.co.uk/news/technology-12345679</link>
+      <guid isPermaLink="false">https://www.bbc.co.uk/news/technology-12345679</guid>
+      <pubDate>Thu, 26 Dec 2024 14:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

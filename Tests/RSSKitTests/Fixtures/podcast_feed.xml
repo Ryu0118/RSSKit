@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  <channel>
+    <title>Tech Talk Podcast</title>
+    <link>https://podcast.example.com</link>
+    <description>Weekly discussions about the latest in technology</description>
+    <language>en-us</language>
+    <copyright>2024 Tech Talk</copyright>
+    <generator>Podcast Generator 1.0</generator>
+    <image>
+      <url>https://podcast.example.com/cover.jpg</url>
+      <title>Tech Talk Podcast</title>
+      <link>https://podcast.example.com</link>
+    </image>
+    <item>
+      <title>Episode 100: The Future of AI</title>
+      <link>https://podcast.example.com/episodes/100</link>
+      <description>In this milestone episode, we discuss where AI is heading.</description>
+      <enclosure url="https://podcast.example.com/audio/ep100.mp3" length="52428800" type="audio/mpeg"/>
+      <guid>https://podcast.example.com/episodes/100</guid>
+      <pubDate>Mon, 23 Dec 2024 06:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Episode 99: Swift 6 Deep Dive</title>
+      <link>https://podcast.example.com/episodes/99</link>
+      <description>A comprehensive look at Swift 6 features and concurrency.</description>
+      <enclosure url="https://podcast.example.com/audio/ep99.mp3" length="48234567" type="audio/mpeg"/>
+      <guid>https://podcast.example.com/episodes/99</guid>
+      <pubDate>Mon, 16 Dec 2024 06:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>
