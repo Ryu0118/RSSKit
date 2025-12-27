@@ -46,12 +46,17 @@ Or add it through Xcode: File → Add Package Dependencies.
 
 ## Module Structure
 
-```
-RSSKit
-├── RSSCore      # Shared models and utilities
-├── RSS1Kit      # RSS 1.0 (RDF/XML) parser
-├── RSS2Kit      # RSS 2.0 parser
-└── RSSKit       # Unified API with auto-detection
+```mermaid
+graph TD
+    RSSKit["RSSKit<br/><i>Unified API with auto-detection</i>"]
+    RSS1Kit["RSS1Kit<br/><i>RSS 1.0 (RDF/XML) parser</i>"]
+    RSS2Kit["RSS2Kit<br/><i>RSS 2.0 parser</i>"]
+    RSSCore["RSSCore<br/><i>Shared models and utilities</i>"]
+
+    RSSKit --> RSS1Kit
+    RSSKit --> RSS2Kit
+    RSS1Kit --> RSSCore
+    RSS2Kit --> RSSCore
 ```
 
 | Module | Description | Use Case |
